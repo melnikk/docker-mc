@@ -108,14 +108,16 @@ docker rm -fv `docker ps -aq`
 ### 011. Зовите Bob
 
 ```
-const string url = "https://google.com";
-var request = Vostok.Clusterclient.Model.Request.Post(url);
+var url = new Uri("https://ya.ru");
+var log = new ConsoleLog();
 var cluster = new ClusterClient(
-    null,
+    log,
     config =>
     {
-        config.ClusterProvider = new FixedClusterProvider(new Uri(url));
-        config.Transport = new VostokHttpTransport(null);
+        config.ClusterProvider = new FixedClusterProvider(url);
+        config.Transport = new VostokHttpTransport(log);
     });
-cluster.SendAsync(request);
+
+var result = cluster.Send(Vostok.Clusterclient.Model.Request.Get("/"));
+result.Response.EnsureSuccessStatusCode();
 ```
